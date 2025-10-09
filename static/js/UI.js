@@ -1,31 +1,54 @@
-    const input = document.getElementById('noteInput');
-    const btn = document.getElementById('addNoteBtn');
-    const container = document.getElementById('notesContainer');
+// UI.js
+document.addEventListener('DOMContentLoaded', () => {
+    const openBtn = document.getElementById('openNoteForm');
+    const modal = document.getElementById('noteModal');
+    const modalContent = document.querySelector('.note-modal-content');
+    const closeBtn = document.getElementById('closeNoteBtn');
+    const saveBtn = document.getElementById('saveNoteBtn');
+    const notesContainer = document.getElementById('notesContainer');
 
-    function createNote(text) {
-      if (!text) return;
+    // Открыть модалку
+    openBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+    });
 
-      const note = document.createElement('div');
-      note.className = 'note';
-      note.textContent = text;
+    // Закрыть модалку
+    closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
 
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '❌';
-      deleteBtn.onclick = () => container.removeChild(note);
-
-      note.appendChild(deleteBtn);
-      container.appendChild(note);
+    modal.addEventListener('click', (e) => {
+    if (!modalContent.contains(e.target)) {
+        modal.classList.add('hidden');
     }
+});
 
-    btn.addEventListener('click', () => {
-      createNote(input.value);
-      input.value = '';
-      input.focus();
-    });
+    // Сохранить заметку
+    saveBtn.addEventListener('click', () => {
+        const title = document.getElementById('noteTitle').value.trim();
+        const body = document.getElementById('noteBody').value.trim();
 
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        createNote(input.value);
-        input.value = '';
-      }
+        if (!title || !body) {
+            alert('Введите заголовок и тело заметки!');
+            return;
+        }
+
+        // Создаём DOM-элемент заметки
+        const noteDiv = document.createElement('div');
+        noteDiv.classList.add('note-item');
+        const dateStr = new Date().toLocaleString();
+
+        noteDiv.innerHTML = `
+            <h3>${title}</h3>
+            <p>${body}</p>
+            <span>${dateStr}</span>
+        `;
+
+        notesContainer.prepend(noteDiv); // добавляем сверху
+
+        // Закрываем модалку и очищаем форму
+        modal.classList.add('hidden');
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteBody').value = '';
     });
+});

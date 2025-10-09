@@ -1,78 +1,63 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
-	"mime"
 	"net/http"
-	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-type Note struct {
-	ID       int       `json:"id"`
-	Title    string    `json:"title"`
-	Body     string    `json:"body"`
-	DateTime time.Time `json:"datetime"`
+// структура для передачи данных в шаблон
+type PageData struct {
+	Notes []Note
 }
 
 func main() {
+	// порт через флаг
 	portVal := flag.Int("port", 8080, "Port")
 	flag.Parse()
-
 	port := fmt.Sprintf(":%d", *portVal)
 
+	// читаем заметки
+	notes, err := ReadNotes("data.json")
+	if err != nil {
+		fmt.Println("Ошибка чтения заметок:", err)
+		notes = []Note{}
+	}
+
+	// роутер
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 
+	// главная страница
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl := template.Must(template.ParseFiles("static/html/index.html"))
-		tmpl.Execute(w, nil)
-	})
-
-	r.Get("/static/*", func(w http.ResponseWriter, r *http.Request) {
-		path := "." + r.URL.Path
-		ext := filepath.Ext(path)
-		if mimeType := mime.TypeByExtension(ext); mimeType != "" {
-			w.Header().Set("Content-Type", mimeType)
-		}
-		http.ServeFile(w, r, path)
-	})
-
-	file, err := os.OpenFile("data.json", os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	_, err = decoder.Token()
-	if err != nil {
-		panic(err)
-	}
-
-	count := 0
-	for decoder.More() {
-		var note Note
-		err := decoder.Decode(&note)
+		tmpl, err := template.ParseFiles("static/html/index.html")
 		if err != nil {
-			panic(err)
+			http.Error(w, "Ошибка загрузки шаблона", http.StatusInternalServerError)
+			fmt.Println("Parse template error:", err)
+			return
 		}
 
-		count++
-		if count%10000 == 0 {
-			fmt.Printf("Прочитано %d пользователей\n", count)
+		data := PageData{Notes: notes}
+		if err := tmpl.Execute(w, data); err != nil {
+			http.Error(w, "Ошибка рендеринга шаблона", http.StatusInternalServerError)
+			fmt.Println("Template execute error:", err)
 		}
-	}
+	})
 
+	// статика (css/js)
+	fs := http.FileServer(http.Dir("./static"))
+	r.Handle("/static/*", http.StripPrefix("/static/", fs))
+
+	// дебаг
 	fmt.Println("Server is running on port", port)
-	fmt.Println("⚠️ Usage:")
-	fmt.Println("  go run main.go --port=8080  // Specifies port")
-	http.ListenAndServe(port, r)
+	fmt.Println("⚠️ Usage: go run main.go --port=8080")
+
+	// старт сервера
+	if err := http.ListenAndServe(port, r); err != nil {
+		fmt.Println("Server error:", err)
+	}
 }

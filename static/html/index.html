@@ -10,14 +10,33 @@
   <main>
     <h1>📒 My Notes</h1>
 
-    <div class="note-form">
-      <input type="text" id="noteInput" placeholder="Start writing sth...">
-      <button id="addNoteBtn">Add</button>
+    <!-- Кнопка-плюс в углу -->
+    <button id="openNoteForm" class="floating-btn">+</button>
+
+    <!-- Форма в модальном окне -->
+    <div id="noteModal" class="note-modal hidden">
+      <div class="note-modal-content">
+        <h2>Новая заметка</h2>
+        <input type="text" id="noteTitle" placeholder="Title">
+        <textarea id="noteBody" placeholder="Start writing..."></textarea>
+        <div class="modal-actions">
+          <button id="saveNoteBtn">Save</button>
+          <button id="closeNoteBtn">Cancel</button>
+        </div>
+      </div>
     </div>
 
+
     <div class="notes-container" id="notesContainer">
-      <!-- Заметки будут появляться здесь -->
+      {{range .Notes}}
+        <div class="note-item">
+          <h3>{{.Title}}</h3>
+          <p>{{.Body}}</p>
+          <span>{{.DateTime}}</span>
+        </div>
+      {{end}}
     </div>
+
   </main>
 
   <script src="/static/js/UI.js"></script>
