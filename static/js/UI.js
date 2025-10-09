@@ -1,4 +1,4 @@
-import sendNote from "./backend.js";
+import {sendNote, deleteNote} from "./backend.js";
 
 // UI.js
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('closeNoteBtn');
     const saveBtn = document.getElementById('saveNoteBtn');
     const notesContainer = document.getElementById('notesContainer');
+    const deleteBtn = document.querySelectorAll('.deleteBtn')
+    const noteModalDelete = document.getElementById("noteModalDelete")
+    const noteModalDeleteContent = document.querySelector(".note-modal-delete-content")
+    const DeleteBtnSubmit = document.getElementById("DeleteBtnSubmit")
+    const closeNoteBtnSubmit = document.getElementById('closeNoteBtnSubmit')
+
 
     // Открыть модалку
     openBtn.addEventListener('click', () => {
@@ -20,13 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modal.addEventListener('click', (e) => {
-    if (!modalContent.contains(e.target)) {
-        modal.classList.add('hidden');
-    }
-});
+        if (!modalContent.contains(e.target)) {
+            modal.classList.add('hidden');
+        }
+    });
+    noteModalDelete.addEventListener('click', (e)=>{
+        if (!noteModalDeleteContent.contains(e.target) || e.target == closeNoteBtnSubmit) {
+            noteModalDelete.classList.add('hidden');
+        }
+    })
 
-    // Сохранить заметку
-    saveBtn.addEventListener('click', () => {
+        // Сохранить заметку
+    saveBtn.addEventListener('click', async () => {
         const title = document.getElementById('noteTitle').value.trim();
         const body = document.getElementById('noteBody').value.trim();
 
@@ -35,9 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        sendNote()
+        // 1️⃣ Отправляем на сервер и ждём
+        await sendNote();
 
-        // Создаём DOM-элемент заметки
+        // 2️⃣ Создаём DOM-элемент заметки после успешного отправления
         const noteDiv = document.createElement('div');
         noteDiv.classList.add('note-item');
         const dateStr = new Date().toLocaleString();
@@ -45,14 +57,31 @@ document.addEventListener('DOMContentLoaded', () => {
         noteDiv.innerHTML = `
             <h3>${title}</h3>
             <p>${body}</p>
-            <span>${dateStr}</span>
+            <div class="noteDesc">
+                <span>${dateStr}</span>
+                <span class="deleteBtn">Delete</span>
+            </div>
         `;
 
-        notesContainer.prepend(noteDiv); // добавляем сверху
+        notesContainer.prepend(noteDiv);
 
-        // Закрываем модалку и очищаем форму
+        // 3️⃣ Закрываем модалку и очищаем форму
         modal.classList.add('hidden');
         document.getElementById('noteTitle').value = '';
         document.getElementById('noteBody').value = '';
     });
+
+    // Delete Notes
+    deleteBtn.forEach(btn => {
+        btn.addEventListener('click', ()=>{
+        const msg_id = btn.dataset.id
+        noteModalDelete.classList.remove("hidden")
+        DeleteBtnSubmit.dataset.id = msg_id
+       }) 
+    });
+
+    DeleteBtnSubmit.addEventListener('click', ()=>{
+        deleteNote(DeleteBtnSubmit.dataset.id)
+        noteModalDelete.classList.add("hidden")
+    })
 });

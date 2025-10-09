@@ -26,4 +26,25 @@ async function sendNote() {
     }
 }
 
-export default sendNote
+async function deleteNote(msg_id) {
+    try {
+        const port = window.PORT;
+        const key_obj = { id: msg_id };
+
+        const res = await fetch(`http://localhost:${port}/delete-note`, {
+            method: 'POST', // или 'DELETE', если сервер поддерживает
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(key_obj)
+        });
+
+        // 1️⃣ Удаляем заметку из DOM
+        const noteElem = document.querySelector(`.note-item[data-id="${msg_id}"]`);
+        noteElem.remove()
+
+        console.log("Заметка удалена успешно!");
+    } catch (err) {
+        console.log("Fetch error:", err);
+    }
+}
+
+export { sendNote, deleteNote };

@@ -66,6 +66,12 @@ h1 {
   transition: background-color 0.2s;
 }
 
+#DeleteBtnSubmit{
+  background-color: red;
+  color: white;
+  border-radius: 2px 5px;
+}
+
 .note-form button:hover {
   background-color: #2f3640;
 }
@@ -106,6 +112,25 @@ h1 {
 .note-item span {
   font-size: 0.85rem;
   color: #718093;
+}
+.noteDesc{
+  display: flex;
+  justify-content: space-between;
+
+}
+.deleteBtn{
+  background-color: red;
+  color: white !important;
+  font-size: bold;
+  padding: 2px 5px;
+  letter-spacing: 1px;
+  border-radius: 5px;
+}
+.deleteBtn:hover{
+  cursor: pointer
+}
+.deleteBtn::selection{
+  background-color: transparent;
 }
 /* ====== Плавающая кнопка ====== */
 .floating-btn {
@@ -149,7 +174,7 @@ h1 {
   display: none;
 }
 
-.note-modal-content {
+.note-modal-content, .note-modal-delete-content {
   background-color: #ffffff;
   padding: 25px 30px;
   border-radius: 12px;
@@ -159,6 +184,7 @@ h1 {
   flex-direction: column;
   gap: 15px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  user-select: none;
 }
 
 .note-modal-content input,

@@ -70,6 +70,10 @@ func main() {
 		})
 	})
 
+	r.Post("/delete-note", func(w http.ResponseWriter, r *http.Request) {
+
+	})
+
 	// статика (css/js)
 	fs := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static/", fs))

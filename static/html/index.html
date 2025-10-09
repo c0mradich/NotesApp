@@ -27,13 +27,27 @@
       </div>
     </div>
 
+        <!-- Форма в модальном окне -->
+    <div id="noteModalDelete" class="note-modal hidden">
+      <div class="note-modal-delete-content">
+        <h2 class="delete__note">Delete Note</h2>
+        <div class="modal-actions">
+          <button id="DeleteBtnSubmit">Delete</button>
+          <button id="closeNoteBtnSubmit">Cancel</button>
+        </div>
+      </div>
+    </div>
+
 
     <div class="notes-container" id="notesContainer">
       {{range .Notes}}
-        <div class="note-item">
+        <div class="note-item" data-id="{{.ID}}">
           <h3>{{.Title}}</h3>
           <p>{{.Body}}</p>
-          <span>{{.DateTime}}</span>
+          <div class="noteDesc">
+            <span>{{.DateTime}}</span>
+            <span class="deleteBtn" data-id="{{.ID}}">Delete</span>
+          </div>
         </div>
       {{end}}
     </div>
