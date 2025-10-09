@@ -14,6 +14,11 @@ type Note struct {
 	DateTime time.Time `json:"datetime"` // для примера
 }
 
+type Note_Front struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
+
 func ReadNotes(filePath string) ([]Note, error) {
 	// Открываем файл для чтения/записи, создаём если нет
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
@@ -53,4 +58,38 @@ func ReadNotes(filePath string) ([]Note, error) {
 	}
 
 	return notes, nil
+}
+
+func AddNoteSimple(filePath string, noteFront Note_Front) (Note, error) {
+	// 1️⃣ Читаем существующие заметки
+	notes, err := ReadNotes(filePath)
+	if err != nil {
+		notes = []Note{} // если файл пустой или битый
+	}
+
+	// 2️⃣ Создаём новую заметку
+	newNote := Note{
+		ID:       len(notes) + 1,
+		Title:    noteFront.Title,
+		Body:     noteFront.Body,
+		DateTime: time.Now(),
+	}
+
+	// 3️⃣ Добавляем к массиву
+	notes = append(notes, newNote)
+
+	// 4️⃣ Сохраняем обратно напрямую
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return Note{}, fmt.Errorf("не удалось открыть файл для записи: %w", err)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(notes); err != nil {
+		return Note{}, fmt.Errorf("ошибка кодирования JSON: %w", err)
+	}
+
+	return newNote, nil
 }

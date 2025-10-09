@@ -1,3 +1,5 @@
+import sendNote from "./backend.js";
+
 // UI.js
 document.addEventListener('DOMContentLoaded', () => {
     const openBtn = document.getElementById('openNoteForm');
@@ -32,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Введите заголовок и тело заметки!');
             return;
         }
+
+        sendNote()
 
         // Создаём DOM-элемент заметки
         const noteDiv = document.createElement('div');

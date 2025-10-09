@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
@@ -13,6 +14,7 @@ import (
 // структура для передачи данных в шаблон
 type PageData struct {
 	Notes []Note
+	PORT  int
 }
 
 func main() {
@@ -20,13 +22,6 @@ func main() {
 	portVal := flag.Int("port", 8080, "Port")
 	flag.Parse()
 	port := fmt.Sprintf(":%d", *portVal)
-
-	// читаем заметки
-	notes, err := ReadNotes("data.json")
-	if err != nil {
-		fmt.Println("Ошибка чтения заметок:", err)
-		notes = []Note{}
-	}
 
 	// роутер
 	r := chi.NewRouter()
@@ -41,11 +36,38 @@ func main() {
 			return
 		}
 
-		data := PageData{Notes: notes}
+		// читаем заметки
+		notes, err := ReadNotes("data.json")
+		if err != nil {
+			fmt.Println("Ошибка чтения заметок:", err)
+			notes = []Note{}
+		}
+
+		data := PageData{Notes: notes, PORT: *portVal}
 		if err := tmpl.Execute(w, data); err != nil {
 			http.Error(w, "Ошибка рендеринга шаблона", http.StatusInternalServerError)
 			fmt.Println("Template execute error:", err)
 		}
+	})
+
+	r.Post("/add-note", func(w http.ResponseWriter, r *http.Request) {
+		var noteFront Note_Front
+		if err := json.NewDecoder(r.Body).Decode(&noteFront); err != nil {
+			http.Error(w, "Ошибка декодирования JSON", http.StatusBadRequest)
+			return
+		}
+
+		newNote, err := AddNoteSimple("data.json", noteFront)
+		if err != nil {
+			http.Error(w, "Ошибка сохранения заметки", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]any{
+			"success": true,
+			"note":    newNote,
+		})
 	})
 
 	// статика (css/js)

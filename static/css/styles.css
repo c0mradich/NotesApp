@@ -109,6 +109,7 @@ h1 {
 }
 /* ====== Плавающая кнопка ====== */
 .floating-btn {
+  line-height: 40px;
   position: fixed;
   bottom: 30px;
   right: 30px;
