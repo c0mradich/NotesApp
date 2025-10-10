@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -17,6 +18,10 @@ type Note struct {
 type Note_Front struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
+}
+
+type MSG_ID struct {
+	Msg_id string `json:"msg_id"`
 }
 
 func ReadNotes(filePath string) ([]Note, error) {
@@ -92,4 +97,44 @@ func AddNoteSimple(filePath string, noteFront Note_Front) (Note, error) {
 	}
 
 	return newNote, nil
+}
+
+func DeleteNoteSimple(filePath string, msgID string) error {
+	notes, err := ReadNotes(filePath)
+	if err != nil {
+		return fmt.Errorf("ошибка чтения файла: %w", err)
+	}
+
+	idInt, err := strconv.Atoi(msgID)
+	if err != nil {
+		return fmt.Errorf("невалидный msg_id: %s", msgID)
+	}
+
+	var updated []Note
+	found := false
+	for _, note := range notes {
+		if note.ID == idInt {
+			found = true
+			continue
+		}
+		updated = append(updated, note)
+	}
+
+	if !found {
+		return fmt.Errorf("заметка с id=%d не найдена", idInt)
+	}
+
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return fmt.Errorf("не удалось открыть файл для записи: %w", err)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(updated); err != nil {
+		return fmt.Errorf("ошибка кодирования JSON: %w", err)
+	}
+
+	return nil
 }

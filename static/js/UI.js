@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteModalDeleteContent = document.querySelector(".note-modal-delete-content")
     const DeleteBtnSubmit = document.getElementById("DeleteBtnSubmit")
     const closeNoteBtnSubmit = document.getElementById('closeNoteBtnSubmit')
+    const editBtn = document.querySelectorAll(".editBtn")
 
 
     // Открыть модалку
@@ -59,7 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>${body}</p>
             <div class="noteDesc">
                 <span>${dateStr}</span>
-                <span class="deleteBtn">Delete</span>
+            <div>
+              <span class="editBtn">Edit</span>
+              <span class="deleteBtn"">Delete</span>
+            </div>
             </div>
         `;
 
@@ -83,5 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
     DeleteBtnSubmit.addEventListener('click', ()=>{
         deleteNote(DeleteBtnSubmit.dataset.id)
         noteModalDelete.classList.add("hidden")
+    })
+
+    editBtn.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            const message_id = btn.dataset.id;
+            const msg = document.querySelector(`.note-item[data-id="${message_id}"]`)
+            const msg_title = msg.querySelector(".note_title").textContent
+            const msg_body = msg.querySelector(".note_body").textContent
+            sessionStorage.setItem("msg_title", msg_title)
+            sessionStorage.setItem("msg_body", msg_body)
+            sessionStorage.setItem("msg_id", message_id)
+            window.open(`http://localhost:8080/note/${message_id}`, "_blank");
+        })
     })
 });

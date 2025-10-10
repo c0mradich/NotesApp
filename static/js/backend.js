@@ -29,22 +29,32 @@ async function sendNote() {
 async function deleteNote(msg_id) {
     try {
         const port = window.PORT;
-        const key_obj = { id: msg_id };
+        const key_obj = { msg_id: msg_id };
 
         const res = await fetch(`http://localhost:${port}/delete-note`, {
-            method: 'POST', // или 'DELETE', если сервер поддерживает
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(key_obj)
         });
 
-        // 1️⃣ Удаляем заметку из DOM
-        const noteElem = document.querySelector(`.note-item[data-id="${msg_id}"]`);
-        noteElem.remove()
+        // ✅ Проверяем, есть ли тело у ответа
+        const text = await res.text();
+        if (!text) {
+            console.warn("Пустой ответ от сервера");
+            return;
+        }
 
-        console.log("Заметка удалена успешно!");
+        const data = JSON.parse(text);
+        if (data.success) {
+            document.querySelector(`.note-item[data-id="${msg_id}"]`)?.remove();
+            console.log("Заметка удалена успешно!");
+        } else {
+            console.log("Ошибка удаления:", data.err);
+        }
     } catch (err) {
         console.log("Fetch error:", err);
     }
 }
+
 
 export { sendNote, deleteNote };

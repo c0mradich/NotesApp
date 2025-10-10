@@ -1,0 +1,89 @@
+/* ====== Основной сброс ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ====== Body и фон ====== */
+body {
+  background: url('/static/assets/note-bg.jpg') center/cover no-repeat fixed;
+  color: #2f3640;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* ====== Основной блок заметки (main) ====== */
+main {
+  width: 100%;
+  max-width: 800px;
+  background-color: transparent;
+  padding: 30px;
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* ====== Header и заголовок ====== */
+header {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1e272e;
+}
+
+/* Input внутри h1 */
+header h1 input {
+  font-size: inherit;
+  font-weight: inherit;
+  text-align: center;
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  color: #1e272e;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover / focus для input */
+header h1 input:focus {
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
+  transform: scale(1.02);
+}
+
+/* ====== Textarea заметки ====== */
+/* ====== Textarea как "заголовок body" ====== */
+main textarea#noteBody {
+  width: 100%;
+  min-height: 300px;              /* минимальная высота */
+  font-size: 1.1rem;              /* чуть меньше, чем h1, можно увеличить */
+  line-height: 1.6;
+  text-align: start;              /* текст по центру, как в input */
+  color: #1e272e;
+  background: rgba(255, 255, 255, 0.05); /* почти прозрачный фон */
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  outline: none;                   /* убираем стандартный контур */
+  resize: vertical;                /* можно менять высоту */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover / focus эффект */
+main textarea#noteBody:focus {
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
+  transform: scale(1.02);
+}

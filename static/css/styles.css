@@ -15,6 +15,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   padding: 40px 20px;
+  background: url('/static/assets/main_bg.jpg') center/cover no-repeat fixed;
 }
 
 main {
@@ -118,6 +119,7 @@ h1 {
   justify-content: space-between;
 
 }
+
 .deleteBtn{
   background-color: red;
   color: white !important;
@@ -126,10 +128,21 @@ h1 {
   letter-spacing: 1px;
   border-radius: 5px;
 }
-.deleteBtn:hover{
+
+.editBtn{
+  background-color: rgb(2, 132, 255);
+  color: white !important;
+  font-size: bold;
+  padding: 2px 5px;
+  letter-spacing: 2px;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.deleteBtn:hover, .editBtn:hover{
   cursor: pointer
 }
-.deleteBtn::selection{
+.deleteBtn::selection, .editBtn::selection{
   background-color: transparent;
 }
 /* ====== Плавающая кнопка ====== */

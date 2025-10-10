@@ -69,9 +69,46 @@ func main() {
 			"note":    newNote,
 		})
 	})
-
+	// delete Note
 	r.Post("/delete-note", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 
+		var msg MSG_ID
+		if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
+			json.NewEncoder(w).Encode(map[string]any{
+				"success": false,
+				"err":     "Ошибка декодирования JSON: " + err.Error(),
+			})
+			return
+		}
+
+		fmt.Println("Удаляем заметку с ID:", msg)
+
+		if err := DeleteNoteSimple("data.json", msg.Msg_id); err != nil {
+			json.NewEncoder(w).Encode(map[string]any{
+				"success": false,
+				"err":     "Ошибка удаления заметки: " + err.Error(),
+			})
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"success": true,
+		})
+	})
+
+	r.Get("/note/*", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, err := template.ParseFiles("static/html/note.html")
+		if err != nil {
+			http.Error(w, "Ошибка загрузки шаблона", http.StatusInternalServerError)
+			fmt.Println("Template parse error:", err)
+			return
+		}
+
+		if err := tmpl.Execute(w, nil); err != nil {
+			http.Error(w, "Ошибка рендеринга шаблона", http.StatusInternalServerError)
+			fmt.Println("Template execute error:", err)
+		}
 	})
 
 	// статика (css/js)

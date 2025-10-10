@@ -42,11 +42,14 @@
     <div class="notes-container" id="notesContainer">
       {{range .Notes}}
         <div class="note-item" data-id="{{.ID}}">
-          <h3>{{.Title}}</h3>
-          <p>{{.Body}}</p>
+          <h3 class="note_title">{{.Title}}</h3>
+          <p class="note_body">{{.Body}}</p>
           <div class="noteDesc">
             <span>{{.DateTime}}</span>
-            <span class="deleteBtn" data-id="{{.ID}}">Delete</span>
+            <div>
+              <span class="editBtn" data-id="{{.ID}}">Edit</span>
+              <span class="deleteBtn" data-id="{{.ID}}">Delete</span>
+            </div>
           </div>
         </div>
       {{end}}
