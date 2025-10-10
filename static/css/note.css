@@ -71,19 +71,88 @@ main textarea#noteBody {
   line-height: 1.6;
   text-align: start;              /* текст по центру, как в input */
   color: #1e272e;
-  background: rgba(255, 255, 255, 0.05); /* почти прозрачный фон */
+  background: rgba(255, 255, 255, 0.3); /* почти прозрачный фон */
   border: none;
   border-radius: 8px;
   padding: 10px 15px;
   outline: none;                   /* убираем стандартный контур */
   resize: vertical;                /* можно менять высоту */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background 3s ease, box-shadow 3s ease;
 }
 
 /* Hover / focus эффект */
-main textarea#noteBody:focus {
+main textarea#noteBody:hover {
   background-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 0 12px rgba(0,0,0,0.2);
-  transform: scale(1.02);
+}
+
+/* ====== Общие стили для кнопок ====== */
+#BackBtn, #SaveBtn {
+  outline: none;
+  border-radius: 6px;                  /* чуть больше скругление */
+  border: none;
+  padding: 8px 20px;                   /* увеличил padding для более "воздушного" вида */
+  font-weight: 600;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* легкая тень для depth */
+}
+
+/* Hover эффект */
+#BackBtn:hover, #SaveBtn:hover {
+  background-color: rgba(0, 0, 0, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* Active эффект (при клике) */
+#BackBtn:active, #SaveBtn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+/* Специфический стиль для BackBtn (например серый вариант) */
+#BackBtn {
+  background-color: rgba(100, 100, 100, 0.7);
+}
+
+#BackBtn:hover {
+  background-color: rgba(100, 100, 100, 0.85);
+}
+/* ====== SaveBtn стиль ====== */
+#SaveBtn {
+  background-color: rgba(0, 123, 255, 0.8); /* насыщенный синий */
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover эффект */
+#SaveBtn:hover {
+  background-color: rgba(0, 123, 255, 1); /* ярче синий */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,123,255,0.4);
+}
+
+/* Active эффект (при клике) */
+#SaveBtn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0,123,255,0.3);
+}
+
+/* Контейнер кнопок */
+.Buttons {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  gap: 15px;              /* чуть больше пространство между кнопками */
+  margin-top: 20px;       /* отступ сверху */
 }

@@ -21,7 +21,7 @@ body {
 main {
   width: 100%;
   max-width: 800px;
-  background-color: #ffffff;
+  background-color: transparent;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -32,7 +32,7 @@ h1 {
   text-align: center;
   margin-bottom: 25px;
   font-size: 2rem;
-  color: #192a56;
+  color: white;
 }
 
 /* ====== Форма добавления заметки ====== */
@@ -86,7 +86,7 @@ h1 {
 
 /* ====== Отдельная заметка ====== */
 .note-item {
-  background-color: #f1f2f6;
+  background-color: rgba(255,255,255,0.9);
   padding: 15px 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.05);

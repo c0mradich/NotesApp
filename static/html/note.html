@@ -12,6 +12,10 @@
 </header>
 <main>
     <textarea id="noteBody"></textarea>
+    <div class="Buttons">
+        <button id="BackBtn">Back</button>
+        <button id="SaveBtn">Save</button>
+    </div>
 </main>
 <script>
     const titleEl = document.querySelector("header input");
@@ -35,6 +39,12 @@
                 .catch(err => console.error("Ошибка загрузки заметки с сервера:", err));
         }
     }
+
+    const BackBtn = document.querySelector("#BackBtn")
+    const SaveBtn = document.querySelector("#SaveBtn")
+    BackBtn.addEventListener("click", ()=>[
+        window.location.href = `http://localhost:8080/`
+    ])
 </script>
 </body>
 </html>
