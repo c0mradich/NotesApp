@@ -50,6 +50,20 @@ func main() {
 		}
 	})
 
+	r.Get("/note/*", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, err := template.ParseFiles("static/html/note.html")
+		if err != nil {
+			http.Error(w, "Ошибка загрузки шаблона", http.StatusInternalServerError)
+			fmt.Println("Template parse error:", err)
+			return
+		}
+
+		if err := tmpl.Execute(w, nil); err != nil {
+			http.Error(w, "Ошибка рендеринга шаблона", http.StatusInternalServerError)
+			fmt.Println("Template execute error:", err)
+		}
+	})
+
 	r.Post("/add-note", func(w http.ResponseWriter, r *http.Request) {
 		var noteFront Note_Front
 		if err := json.NewDecoder(r.Body).Decode(&noteFront); err != nil {
@@ -97,18 +111,26 @@ func main() {
 		})
 	})
 
-	r.Get("/note/*", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.ParseFiles("static/html/note.html")
-		if err != nil {
-			http.Error(w, "Ошибка загрузки шаблона", http.StatusInternalServerError)
-			fmt.Println("Template parse error:", err)
+	r.Post("/edit-note", func(w http.ResponseWriter, r *http.Request) {
+		var note Edit_Note
+
+		// ✅ Проверка на ошибки при JSON-декодировании
+		if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
+			http.Error(w, "Ошибка декодирования JSON: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		if err := tmpl.Execute(w, nil); err != nil {
-			http.Error(w, "Ошибка рендеринга шаблона", http.StatusInternalServerError)
-			fmt.Println("Template execute error:", err)
-		}
+		// Debug
+		fmt.Println("✏️ Edit note:", note)
+
+		// Main functionality
+		EditNoteSimple("data.json", note.ID, note.Title, note.Body)
+
+		// Пример успешного ответа:
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]any{
+			"success": true,
+		})
 	})
 
 	// статика (css/js)

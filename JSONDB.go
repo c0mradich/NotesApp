@@ -24,6 +24,12 @@ type MSG_ID struct {
 	Msg_id string `json:"msg_id"`
 }
 
+type Edit_Note struct {
+	ID    string `json:"msg_id"`
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
+
 func ReadNotes(filePath string) ([]Note, error) {
 	// Открываем файл для чтения/записи, создаём если нет
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
@@ -31,6 +37,8 @@ func ReadNotes(filePath string) ([]Note, error) {
 		return nil, fmt.Errorf("не удалось открыть файл: %w", err)
 	}
 	defer file.Close()
+
+	// Инициализируем декодер
 
 	decoder := json.NewDecoder(file)
 
@@ -41,6 +49,7 @@ func ReadNotes(filePath string) ([]Note, error) {
 	}
 
 	// Читаем первый токен (ожидаем массив)
+	// Проверка валидности JSON
 	tok, err := decoder.Token()
 	if err != nil {
 		return nil, fmt.Errorf("ошибка чтения токена: %w", err)
@@ -133,6 +142,46 @@ func DeleteNoteSimple(filePath string, msgID string) error {
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(updated); err != nil {
+		return fmt.Errorf("ошибка кодирования JSON: %w", err)
+	}
+
+	return nil
+}
+
+func EditNoteSimple(filePath, msgID, title, body string) error {
+	notes, err := ReadNotes(filePath)
+	if err != nil {
+		return fmt.Errorf("не удалось прочитать заметки: %w", err)
+	}
+
+	idInt, err := strconv.Atoi(msgID)
+	if err != nil {
+		return fmt.Errorf("невалидный msg_id: %s", msgID)
+	}
+
+	found := false
+	for i := range notes {
+		if notes[i].ID == idInt {
+			notes[i].Title = title
+			notes[i].Body = body
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("заметка с id=%d не найдена", idInt)
+	}
+
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return fmt.Errorf("не удалось открыть файл для записи: %w", err)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(notes); err != nil {
 		return fmt.Errorf("ошибка кодирования JSON: %w", err)
 	}
 

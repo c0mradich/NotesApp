@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Notes</title>
 <link rel="stylesheet" href="/static/css/note.css">
+<link rel="icon" href="static/assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
 <header>
@@ -17,34 +18,7 @@
         <button id="SaveBtn">Save</button>
     </div>
 </main>
-<script>
-    const titleEl = document.querySelector("header input");
-    const bodyEl = document.querySelector("#noteBody");
-
-    const title_info = sessionStorage.getItem("msg_title");
-    const body_info = sessionStorage.getItem("msg_body");
-
-    if (title_info) titleEl.value = title_info;
-    if (body_info) bodyEl.value = body_info;
-
-    if (!title_info || !body_info) {
-        const msg_id = sessionStorage.getItem("msg_id");
-        if (msg_id) {
-            fetch(`/get-note/${msg_id}`)
-                .then(res => res.json())
-                .then(data => {
-                    titleEl.value = data.title;   // исправлено
-                    bodyEl.value = data.body;     // исправлено
-                })
-                .catch(err => console.error("Ошибка загрузки заметки с сервера:", err));
-        }
-    }
-
-    const BackBtn = document.querySelector("#BackBtn")
-    const SaveBtn = document.querySelector("#SaveBtn")
-    BackBtn.addEventListener("click", ()=>[
-        window.location.href = `http://localhost:8080/`
-    ])
-</script>
+<script type="module" src="/static/js/noteUI.js"></script>
 </body>
 </html>
+ 
