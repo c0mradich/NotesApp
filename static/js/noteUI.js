@@ -43,4 +43,6 @@ SaveBtn.addEventListener("click", async () => {
 
     await editNote(msg_id, msg_title, msg_body);
     console.log("✅ Изменения отправлены на сервер");
+    // Back to main menu
+    window.location.href = `http://localhost:8080/`;
 });

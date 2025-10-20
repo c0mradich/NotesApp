@@ -17,6 +17,7 @@ async function sendNote() {
         const data = await res.json();
         if (data.success) {
             console.log("✅ Заметка успешно сохранена!");
+            return data.note.ID
         } else {
             console.error("❌ Ошибка при добавлении:", data.err);
         }
